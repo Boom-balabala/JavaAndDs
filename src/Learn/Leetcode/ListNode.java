@@ -7,7 +7,8 @@ public class ListNode {
     int val;
     ListNode next;
 
-    ListNode() {}
+    ListNode() {
+    }
 
     ListNode(int val) {
         this.val = val;
@@ -100,8 +101,10 @@ public class ListNode {
         return slow;
     }
 
-    // [160. 相交链表](https://leetcode.cn/problems/intersection-of-two-linked-lists/)
+    public static void main(String[] args) {
+    }
 
+    // [160. 相交链表](https://leetcode.cn/problems/intersection-of-two-linked-lists/)
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
         int sizeA = getsize(headA);
         int sizeB = getsize(headB);
@@ -257,5 +260,27 @@ public class ListNode {
         return slow;
     }
 
-    public static void main(String[] args) {}
+    // 143 重排链表
+    public void reorderList(ListNode head) {
+        if (head == null || head.next == null) {
+            return;
+        }
+        LinkedList<ListNode> lists = new LinkedList<>();
+        ListNode p = head.next;
+        while (p != null) {
+            lists.add(p);
+            p = p.next;
+        }
+        p = head;
+        while (!lists.isEmpty()) {
+            p.next = lists.removeLast();
+            p = p.next;
+            if (!lists.isEmpty()) {
+                p.next = lists.removeFirst();
+                p = p.next;
+            }
+        }
+        p.next = null;
+        return;
+    }
 }
