@@ -1,0 +1,99 @@
+Classfile /E:/LearningGOGOGO/JavaStart/Java/src/Learn/JUC/SynchronizedDemo2.class
+  Last modified 2024年8月20日; size 505 bytes
+  SHA-256 checksum d5d36f559c219a5ea4d5ce950722dba3492610d2757bd768e99f1e113486adf3
+  Compiled from "SynchronizedDemo2.java"
+public class Learn.JUC.SynchronizedDemo2
+  minor version: 0
+  major version: 65
+  flags: (0x0021) ACC_PUBLIC, ACC_SUPER
+  this_class: #8                          // Learn/JUC/SynchronizedDemo2
+  super_class: #2                         // java/lang/Object
+  interfaces: 0, fields: 1, methods: 3, attributes: 1
+Constant pool:
+   #1 = Methodref          #2.#3          // java/lang/Object."<init>":()V
+   #2 = Class              #4             // java/lang/Object
+   #3 = NameAndType        #5:#6          // "<init>":()V
+   #4 = Utf8               java/lang/Object
+   #5 = Utf8               <init>
+   #6 = Utf8               ()V
+   #7 = Fieldref           #8.#9          // Learn/JUC/SynchronizedDemo2.object:Ljava/lang/Object;
+   #8 = Class              #10            // Learn/JUC/SynchronizedDemo2
+   #9 = NameAndType        #11:#12        // object:Ljava/lang/Object;
+  #10 = Utf8               Learn/JUC/SynchronizedDemo2
+  #11 = Utf8               object
+  #12 = Utf8               Ljava/lang/Object;
+  #13 = Methodref          #8.#14         // Learn/JUC/SynchronizedDemo2.method2:()V
+  #14 = NameAndType        #15:#6         // method2:()V
+  #15 = Utf8               method2
+  #16 = Utf8               Code
+  #17 = Utf8               LineNumberTable
+  #18 = Utf8               method1
+  #19 = Utf8               StackMapTable
+  #20 = Class              #21            // java/lang/Throwable
+  #21 = Utf8               java/lang/Throwable
+  #22 = Utf8               SourceFile
+  #23 = Utf8               SynchronizedDemo2.java
+{
+  java.lang.Object object;
+    descriptor: Ljava/lang/Object;
+    flags: (0x0000)
+
+  public Learn.JUC.SynchronizedDemo2();
+    descriptor: ()V
+    flags: (0x0001) ACC_PUBLIC
+    Code:
+      stack=3, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: aload_0
+         5: new           #2                  // class java/lang/Object
+         8: dup
+         9: invokespecial #1                  // Method java/lang/Object."<init>":()V
+        12: putfield      #7                  // Field object:Ljava/lang/Object;
+        15: return
+      LineNumberTable:
+        line 3: 0
+        line 5: 4
+
+  public void method1();
+    descriptor: ()V
+    flags: (0x0001) ACC_PUBLIC
+    Code:
+      stack=2, locals=3, args_size=1
+         0: aload_0
+         1: getfield      #7                  // Field object:Ljava/lang/Object;
+         4: dup
+         5: astore_1
+         // 当线程进入当线程进入 `synchronized` 方法或代码块时，
+         //JVM 会生成 `monitorenter` 指令，尝试获取与目标对象相关联的 Monitor（监视器）锁。
+         // 这个锁是对象级别的，每个对象都有一个与之关联的 Monitor。
+         6: monitorenter
+         7: aload_1
+         // 当线程退出 `synchronized` 方法或代码块时，JVM 会生成 `monitorexit` 指令，释放目标对象的 Monitor 锁。
+         8: monitorexit
+         9: goto          17
+        12: astore_2
+        13: aload_1
+        14: monitorexit
+        15: aload_2
+        16: athrow
+        17: invokestatic  #13                 // Method method2:()V
+        20: return
+      Exception table:
+         from    to  target type
+             7     9    12   any
+            12    15    12   any
+      LineNumberTable:
+        line 7: 0
+        line 9: 7
+        line 10: 17
+        line 11: 20
+      StackMapTable: number_of_entries = 2
+        frame_type = 255 /* full_frame */
+          offset_delta = 12
+          locals = [ class Learn/JUC/SynchronizedDemo2, class java/lang/Object ]
+          stack = [ class java/lang/Throwable ]
+        frame_type = 250 /* chop */
+          offset_delta = 4
+}
+SourceFile: "SynchronizedDemo2.java"
