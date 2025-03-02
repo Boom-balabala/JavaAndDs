@@ -1,36 +1,52 @@
 package Learn.Leetcode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class Array {
     // [15. 三数之和](https://leetcode.cn/problems/3sum/)
+    private List<List<Integer>> twoSum(int[] nums, int start, int target, int flag) {
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> temp = new ArrayList<>();
+        int left = start;
+        int right = nums.length - 1;
+        while (left < right) {
+            int sum = nums[left] + nums[right];
+            if (sum == target) {
+                temp.add(flag);
+                temp.add(nums[left]);
+                temp.add(nums[right]);
+                res.add(new ArrayList<>(temp));
+                temp.clear();
+                right--;
+                left++;
+                while (left < right && nums[left] == nums[left - 1]) {
+                    left++;
+                }
+                while (left < right && nums[right] == nums[right + 1]) {
+                    right--;
+                }
+            } else if (sum < target) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return res;
+    }
+
     public List<List<Integer>> threeSum(int[] nums) {
         List<List<Integer>> res = new ArrayList<>();
         Arrays.sort(nums);
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] > 0) {
-                return res;
-            }
-            if (i > 0 && nums[i] == nums[i - 1]) { // 去重a
+        for (int i = 0; i < nums.length - 2; i++) {
+            if (i != 0 && nums[i] == nums[i - 1]) {
                 continue;
             }
-            int left = i + 1;
-            int right = nums.length - 1;
-            while (left < right) {
-                int sum = nums[i] + nums[left] + nums[right];
-                if (sum == 0) {
-                    res.add(Arrays.asList(nums[i], nums[left], nums[right]));
-                    do {
-                        right--;
-                    } while (right > left && nums[right + 1] == nums[right]);
-                    do {
-                        left++;
-                    } while (right > left && nums[left - 1] == nums[left]);
-                } else if (sum > 0) {
-                    right--;
-                } else {
-                    left++;
-                }
+            List<List<Integer>> temp = twoSum(nums, i + 1, -nums[i], nums[i]);
+            if (!temp.isEmpty()) {
+                res.addAll(new ArrayList<>(temp));
             }
         }
         return res;
@@ -94,11 +110,6 @@ public class Array {
             }
         }
         return merged.toArray(new int[merged.size()][]);
-    }
-
-    // 373. 查找和最小的 K 对数字
-    public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
-        
     }
 
     public static void main(String[] args) {

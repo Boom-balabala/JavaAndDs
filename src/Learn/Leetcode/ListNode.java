@@ -29,34 +29,10 @@ public class ListNode {
         return size;
     }
 
-    // 23. 合并 K 个升序链表
-    public ListNode mergeKLists(ListNode[] lists) {
-        PriorityQueue<ListNode> priorityQueue =
-                new PriorityQueue<>(
-                        new Comparator<ListNode>() {
-                            @Override
-                            public int compare(ListNode o1, ListNode o2) {
-                                return o1.val - o2.val;
-                            }
-                        });
-        ListNode res = new ListNode(-1);
-        ListNode p = res;
-        for (ListNode list : lists) {
-            if (list != null) {
-                priorityQueue.add(list);
-            }
-        }
-        while (!priorityQueue.isEmpty()) {
-            ListNode node = priorityQueue.remove();
-            if (node.next != null) {
-                priorityQueue.add(node.next);
-            }
-            node.next = null;
-            p.next = node;
-            p = p.next;
-        }
-        return res.next;
-    }
+    /**
+     * 给你单链表的头指针 head 和两个整数 left 和 right ，其中 left <= right 。请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。
+     */
+    ListNode successor = null;
 
     // [24. 两两交换链表中的节点](https://leetcode.cn/problems/swap-nodes-in-pairs/)
     public ListNode swapPairs(ListNode head) {
@@ -77,6 +53,125 @@ public class ListNode {
             pointer = node1;
         }
         return fhead.next;
+    }
+    // 25. K 个一组翻转链表
+    private ListNode end;
+
+    public static void main(String[] args) {
+        ListNode head = new ListNode(1);
+        ListNode p = head;
+        p.next = new ListNode(2);
+        p = p.next;
+        p.next = new ListNode(3);
+        p = p.next;
+        p.next = new ListNode(4);
+        p = p.next;
+        p.next = new ListNode(5);
+        p = p.next;
+        // 测试rotateRight
+        ListNode res = new ListNode().rotateRight(head, 2);
+    }
+
+    // 23. 合并 K 个升序链表
+    public ListNode mergeKLists(ListNode[] lists) {
+        PriorityQueue<ListNode> priorityQueue =
+                new PriorityQueue<>(
+                        (o1, o2) -> o1.val - o2.val);
+        ListNode res = new ListNode(-1);
+        ListNode p = res;
+        for (ListNode list : lists) {
+            if (list != null) {
+                priorityQueue.add(list);
+            }
+        }
+        while (!priorityQueue.isEmpty()) {
+            ListNode node = priorityQueue.remove();
+            if (node.next != null) {
+                priorityQueue.add(node.next);
+            }
+            node.next = null;
+            p.next = node;
+            p = p.next;
+        }
+        return res.next;
+    }
+
+    private ListNode reverseKhelper(ListNode head, int k) {
+        if (k == 1) {
+            end = head.next;
+            return head;
+        }
+        ListNode last = reverseKhelper(head.next, k - 1);
+        head.next.next = head;
+        head.next = end;
+        return last;
+    }
+    // 92 反转链表2
+
+    // 25 k个一组翻转链表
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if (head == null || head.next == null || k == 1) {
+            return head;
+        }
+        ListNode fakeHead = new ListNode(-1);
+        fakeHead.next = head;
+        ListNode pre = fakeHead;
+        while (true) {
+            ListNode p = pre.next;
+            for (int i = 1; i < k && p != null; i++) {
+                p = p.next;
+            }
+            if (p == null) {
+                break;
+            }
+            pre.next = reverseKhelper(pre.next, k);
+            for (int i = 0; i < k; i++) {
+                pre = pre.next;
+            }
+        }
+        return fakeHead.next;
+    }
+
+    // 61 旋转链表
+    // 给你一个链表的头节点 head ，旋转链表，将链表每个节点向右移动 k 个位置。
+    public ListNode rotateRight(ListNode head, int k) {
+        int length = 0;
+        ListNode p = head;
+        ListNode last = head;
+        while (p != null) {
+            length++;
+            p = p.next;
+            if (p != null) {
+                last = last.next;
+            }
+        }
+        if (length == 0 || length == 1 || k % length == 0) {
+            return head;
+        }
+        ListNode fakeHead = new ListNode(-1);
+        fakeHead.next = head;
+        ListNode pre = fakeHead;
+        p = head;
+        k = length - k % length;
+        while (k != 0) {
+            pre = pre.next;
+            p = p.next;
+            k--;
+        }
+        last.next = head;
+        pre.next = null;
+        return p;
+    }
+
+    private ListNode reverseHelper(ListNode head, int n) {
+        if (n == 1) {
+            successor = head.next;
+            return head;
+        }
+        ListNode last = reverseHelper(head.next, n - 1);
+        head.next.next = head;
+        head.next = successor;
+        return last;
     }
 
     // [142. 环形链表 II](https://leetcode.cn/problems/linked-list-cycle-ii/)
@@ -101,8 +196,6 @@ public class ListNode {
         return slow;
     }
 
-    public static void main(String[] args) {
-    }
 
     // [160. 相交链表](https://leetcode.cn/problems/intersection-of-two-linked-lists/)
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
@@ -164,18 +257,32 @@ public class ListNode {
         return pre;
     }
 
-    // 递归
-    private ListNode reverse(ListNode cur, ListNode pre) {
-        if (cur == null) {
-            return pre;
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        if (left == right || head == null || head.next == null) {
+            return head;
         }
-        ListNode tmp = cur.next;
-        cur.next = pre;
-        return reverse(tmp, cur);
+        int length = right - left + 1;
+        ListNode fakehead = new ListNode(-1);
+        fakehead.next = head;
+        ListNode p = fakehead;
+        for (int i = 0; i < left - 1; i++) {
+            p = p.next;
+        }
+        ListNode starter = p.next;
+        p.next = null;
+        p.next = reverseHelper(starter, length);
+        return fakehead.next;
     }
 
-    public ListNode reverseList(ListNode head) {
-        return reverse(head, null);
+    // 递归
+    private ListNode reverse(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode last = reverseList(head.next);
+        head.next.next = head;
+        head.next = null;
+        return last;
     }
 
     // 234. 回文链表
@@ -282,5 +389,9 @@ public class ListNode {
         }
         p.next = null;
         return;
+    }
+
+    public ListNode reverseList(ListNode head) {
+        return reverse(head);
     }
 }
