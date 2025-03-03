@@ -1,9 +1,6 @@
 package Learn.Leetcode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Array {
     // [15. 三数之和](https://leetcode.cn/problems/3sum/)
@@ -112,10 +109,77 @@ public class Array {
         return merged.toArray(new int[merged.size()][]);
     }
 
+    // 974. 和可被 K 整除的子数组
+    // 给定一个整数数组 nums 和一个整数 k ，返回其中元素之和可被 k 整除的非空 子数组 的数目。
+    // (si-sj)&k==0
+    // si%k = sj%k
+    public int subarraysDivByK(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int sum = 0;
+        int res = 0;
+        map.put(0, 1);
+        for (int num : nums) {
+            sum += num;
+            int val = sum % k;
+            val = val < 0 ? val + k : val;
+            if (map.containsKey(val)) {
+                res += map.get(val);
+                map.put(val, map.get(val) + 1);
+            } else {
+                map.put(val, 1);
+            }
+        }
+        return res;
+    }
+
+    // 1124. 表现良好的最长时间段
+
+    /**
+     * 给你一份工作时间表 hours，上面记录着某一位员工每天的工作小时数。
+     * <p>
+     * 我们认为当员工一天中的工作小时数大于 8 小时的时候，那么这一天就是「劳累的一天」。
+     * <p>
+     * 所谓「表现良好的时间段」，意味在这段时间内，「劳累的天数」是严格 大于「不劳累的天数」。
+     * <p>
+     * 请你返回「表现良好时间段」的最大长度。
+     *
+     * @param hours
+     * @return
+     */
+    public int longestWPI(int[] hours) {
+        int sum = 0;
+        int max = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, -1);
+        // si - sj > 0;
+        // sj = si -1
+        for (int i = 0; i < hours.length; i++) {
+            sum += hours[i] > 8 ? 1 : -1;
+            if (map.containsKey(sum)) {
+
+            } else {
+                map.put(sum, i);
+            }
+            if (sum > 0) {
+                max = Math.max(max, i + 1);
+            } else {
+                if (map.containsKey(sum - 1)) {
+                    max = Math.max(max, i - map.get(sum - 1));
+                }
+            }
+
+        }
+        return max;
+
+    }
+
     public static void main(String[] args) {
-        Array array = new Array();
-        // [-1,-100,3,99]
-        int[] nums = {-1, -100, 3, 99};
-        array.rotate(nums, 2);
+        Scanner in = new Scanner(System.in);
+        int size = in.nextInt();
+        int[] hours = new int[size];
+        for (int i = 0; i < size; i++) {
+            hours[i] = in.nextInt();
+        }
+        System.out.println(new Array().longestWPI(hours));
     }
 }
