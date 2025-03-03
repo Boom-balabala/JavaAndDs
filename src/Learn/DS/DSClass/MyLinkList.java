@@ -2,8 +2,6 @@ package Learn.DS.DSClass;
 
 import Learn.DS.interfacePackage.Queue;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author WYL
  */
@@ -122,7 +120,7 @@ public class MyLinkList<T> implements Queue<T> {
         System.out.println();
     }
 
-    private void clearNode(@NotNull Node node) {
+    private void clearNode(Node node) {
         node.pre = null;
         node.next = null;
         node.val = null;
