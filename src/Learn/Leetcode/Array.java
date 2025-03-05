@@ -49,6 +49,32 @@ public class Array {
         return res;
     }
 
+    // 80. 删除有序数组中的重复项
+    public int removeDuplicates(int[] nums) {
+        if (nums.length == 0 || nums.length == 1) {
+            return nums.length;
+        }
+        int insertIndex = 1;
+        int faster = 1;
+        int length = 0;
+        while (faster != nums.length) {
+            if (nums[insertIndex - 1] == nums[faster]) {
+                length++;
+                if (length < 2) {
+                    nums[insertIndex] = nums[faster];
+                    insertIndex++;
+                }
+                faster++;
+            } else {
+                length = 0;
+                nums[insertIndex] = nums[faster];
+                insertIndex++;
+                faster++;
+            }
+        }
+        return insertIndex;
+    }
+
     // [209. 长度最小的子数组](https://leetcode.cn/problems/minimum-size-subarray-sum/)
     public int minSubArrayLen(int target, int[] nums) {
         int result = Integer.MAX_VALUE;
@@ -132,6 +158,69 @@ public class Array {
         return res;
     }
 
+    /**
+     * 1094. 拼车
+     * 车上最初有 capacity 个空座位。车 只能 向一个方向行驶（也就是说，不允许掉头或改变方向）
+     * <p>
+     * 给定整数 capacity 和一个数组 trips ,  trip[i] = [numPassengersi, fromi, toi] 表示第 i 次旅行有 numPassengersi 乘客，接他们和放他们的位置分别是 fromi 和 toi 。这些位置是从汽车的初始位置向东的公里数。
+     * <p>
+     * 当且仅当你可以在所有给定的行程中接送所有乘客时，返回 true，否则请返回 false。
+     *
+     * @param trips
+     * @param capacity
+     * @return
+     */
+    public boolean carPooling(int[][] trips, int capacity) {
+        int[] diff = new int[1001];
+        int min_start = Integer.MAX_VALUE;
+        int max_end = Integer.MIN_VALUE;
+        for (int i = 0; i < trips.length; i++) {
+            int count = trips[i][0];
+            int start = trips[i][1] + 1;
+            int end = trips[i][2] + 1;
+            diff[start] += count;
+            diff[end] -= count;
+            min_start = Math.min(min_start, start);
+            max_end = Math.max(max_end, end);
+        }
+        for (int i = min_start; i <= max_end; i++) {
+            diff[i] = diff[i - 1] + diff[i];
+            if (diff[i] > capacity) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 1109. 航班预订统计 这里有 n 个航班，它们分别从 1 到 n 进行编号。
+     * <p>
+     * 有一份航班预订表 bookings ，表中第 i 条预订记录 bookings[i] = [firsti, lasti, seatsi] 意味着在从 firsti 到 lasti （包含 firsti 和 lasti ）的 每个航班 上预订了 seatsi 个座位。
+     * <p>
+     * 请你返回一个长度为 n 的数组 answer，里面的元素是每个航班预定的座位总数。
+     *
+     * @param bookings 代表预定记录的二维数组
+     * @param n        航班数
+     * @return
+     */
+
+    public int[] corpFlightBookings(int[][] bookings, int n) {
+        int[] diff = new int[n];
+        for (int i = 0; i < bookings.length; i++) {
+            int start = bookings[i][0] - 1;
+            int count = bookings[i][2];
+            diff[start] += count;
+            if (bookings[i][1] != n) {
+                int end = bookings[i][1];
+                diff[end] -= count;
+            }
+        }
+        for (int i = 1;i<diff.length;i++){
+            diff[i] = diff[i-1]+diff[i];
+        }
+        return diff;
+    }
+
     // 1124. 表现良好的最长时间段
 
     /**
@@ -174,12 +263,11 @@ public class Array {
     }
 
     public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-        int size = in.nextInt();
-        int[] hours = new int[size];
-        for (int i = 0; i < size; i++) {
-            hours[i] = in.nextInt();
-        }
-        System.out.println(new Array().longestWPI(hours));
+        //test carPooling
+        int[][] trips = new int[][]{{2, 1, 5}, {3, 5, 7}};
+        int capacity = 3;
+        Array array = new Array();
+        System.out.println(array.carPooling(trips, capacity));
+
     }
 }

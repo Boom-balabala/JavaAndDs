@@ -1,6 +1,11 @@
 package Learn.Leetcode;
 
-/** 动态规划5步 1.确定dp数组（dp table）以及下标的含义 2.确定递推公式 3.dp数组如何初始化 4.确定遍历顺序 5.举例推导dp数组 */
+import java.util.Arrays;
+import java.util.Scanner;
+
+/**
+ * 动态规划5步 1.确定dp数组（dp table）以及下标的含义 2.确定递推公式 3.dp数组如何初始化 4.确定遍历顺序 5.举例推导dp数组
+ */
 public class Dynamic {
     /**
      * 62. 不同路径 一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为 “Start” ）。
@@ -57,7 +62,9 @@ public class Dynamic {
         return dp[m - 1][n - 1];
     }
 
-    /** 70. 爬楼梯 假设你正在爬楼梯。需要 n 阶你才能到达楼顶。 每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？ */
+    /**
+     * 70. 爬楼梯 假设你正在爬楼梯。需要 n 阶你才能到达楼顶。 每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+     */
     public int climbStairs(int n) {
         int[] dp = new int[n + 1];
         for (int i = 1; i < n + 1; i++) {
@@ -70,7 +77,9 @@ public class Dynamic {
         return dp[n];
     }
 
-    /** 96. 不同的二叉搜索树 给你一个整数 n ，求恰由 n 个节点组成且节点值从 1 到 n 互不相同的 二叉搜索树 有多少种？返回满足题意的二叉搜索树的种数。 */
+    /**
+     * 96. 不同的二叉搜索树 给你一个整数 n ，求恰由 n 个节点组成且节点值从 1 到 n 互不相同的 二叉搜索树 有多少种？返回满足题意的二叉搜索树的种数。
+     */
     public int numTrees(int n) {
         int[] dp = new int[n + 1];
         dp[1] = 1;
@@ -80,6 +89,25 @@ public class Dynamic {
         }
 
         return dp[n];
+    }
+
+    // 322. 零钱兑换
+    public int coinChange(int[] coins, int amount) {
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        for (int i = 1; i < dp.length; i++) {
+            for (int j = 0; j < coins.length; j++) {
+                if (i < coins[j]) {
+                    continue;
+                } else {
+                    if (dp[i - coins[j]] != Integer.MAX_VALUE) {
+                        dp[i] = Math.min(dp[i - coins[j]] + 1, dp[i]);
+                    }
+                }
+            }
+        }
+        return dp[amount] == Integer.MAX_VALUE ? -1 : dp[amount];
     }
 
     /**
@@ -100,15 +128,15 @@ public class Dynamic {
         return dp[n];
     }
 
-    /** 509. 斐波那契数 斐波那契数 （通常用 F(n) 表示）形成的序列称为 斐波那契数列 。该数列由 0 和 1 开始，后面的每一项数字都是前面两项数字的和。 */
+    /**
+     * 509. 斐波那契数 斐波那契数 （通常用 F(n) 表示）形成的序列称为 斐波那契数列 。该数列由 0 和 1 开始，后面的每一项数字都是前面两项数字的和。
+     */
     public int fib(int n) {
         int[] dp = new int[n + 1];
         for (int i = 0; i < n + 1; i++) {
-            if (i <= 1) {
+            if (i == 0 || i == 1) {
                 dp[i] = i;
-            } else {
-                dp[i] = dp[i - 1] + dp[i - 2];
-            }
+            } else dp[i] = dp[i - 1] + dp[i - 2];
         }
         return dp[n];
     }
@@ -134,8 +162,13 @@ public class Dynamic {
     }
 
     public static void main(String[] args) {
-        Dynamic slo = new Dynamic();
-        int n = 10;
-        slo.integerBreak(10);
+        Scanner in = new Scanner(System.in);
+        int length = in.nextInt();
+        int[] nums = new int[length];
+        for (int i = 0; i < length; i++) {
+            nums[i] = in.nextInt();
+        }
+        int amount = in.nextInt();
+        System.out.println(new Dynamic().coinChange(nums, amount));
     }
 }
