@@ -54,61 +54,44 @@ public class ListNode {
         }
         return fhead.next;
     }
-    // 25. K 个一组翻转链表
-    private ListNode end;
 
-    public static void main(String[] args) {
-        ListNode head = new ListNode(1);
-        ListNode p = head;
-        p.next = new ListNode(2);
-        p = p.next;
-        p.next = new ListNode(3);
-        p = p.next;
-        p.next = new ListNode(4);
-        p = p.next;
-        p.next = new ListNode(5);
-        p = p.next;
-        // 测试rotateRight
-        ListNode res = new ListNode().rotateRight(head, 2);
-    }
 
     // 23. 合并 K 个升序链表
     public ListNode mergeKLists(ListNode[] lists) {
-        PriorityQueue<ListNode> priorityQueue =
-                new PriorityQueue<>(
-                        (o1, o2) -> o1.val - o2.val);
-        ListNode res = new ListNode(-1);
-        ListNode p = res;
-        for (ListNode list : lists) {
-            if (list != null) {
-                priorityQueue.add(list);
+        PriorityQueue<ListNode> queue = new PriorityQueue<>((ListNode o1, ListNode o2) -> o1.val - o2.val);
+        for (int i = 0; i < lists.length; i++) {
+            if (lists[i] != null) {
+                queue.add(lists[i]);
             }
         }
-        while (!priorityQueue.isEmpty()) {
-            ListNode node = priorityQueue.remove();
+        ListNode fakehead = new ListNode(-1);
+        ListNode p = fakehead;
+        while (!queue.isEmpty()) {
+            ListNode node = queue.poll();
             if (node.next != null) {
-                priorityQueue.add(node.next);
+                queue.add(node.next);
             }
             node.next = null;
             p.next = node;
             p = p.next;
         }
-        return res.next;
+        return fakehead.next;
     }
 
+    // 25 k个一组翻转链表
+    ListNode nextStarter;
+
     private ListNode reverseKhelper(ListNode head, int k) {
-        if (k == 1) {
-            end = head.next;
+        if (k == 0) {
+            nextStarter = head.next;
             return head;
         }
         ListNode last = reverseKhelper(head.next, k - 1);
         head.next.next = head;
-        head.next = end;
+        head.next = nextStarter;
         return last;
     }
-    // 92 反转链表2
 
-    // 25 k个一组翻转链表
     public ListNode reverseKGroup(ListNode head, int k) {
         if (head == null || head.next == null || k == 1) {
             return head;
@@ -117,14 +100,14 @@ public class ListNode {
         fakeHead.next = head;
         ListNode pre = fakeHead;
         while (true) {
-            ListNode p = pre.next;
-            for (int i = 1; i < k && p != null; i++) {
+            ListNode p = pre;
+            for (int i = 0; i < k && p != null; i++) {
                 p = p.next;
             }
             if (p == null) {
                 break;
             }
-            pre.next = reverseKhelper(pre.next, k);
+            pre.next = reverseKhelper(pre.next, k-1);
             for (int i = 0; i < k; i++) {
                 pre = pre.next;
             }
@@ -393,5 +376,21 @@ public class ListNode {
 
     public ListNode reverseList(ListNode head) {
         return reverse(head);
+    }
+
+    public static void main(String[] args) {
+        // test reverse kgroup lists
+        ListNode head = new ListNode(1);
+        ListNode p = head;
+        for (int i = 2; i <= 5; i++) {
+            p.next = new ListNode(i);
+            p = p.next;
+        }
+        ListNode res = new ListNode().reverseKGroup(head, 2);
+        // print
+        while (res != null) {
+            System.out.println(res.val);
+            res = res.next;
+        }
     }
 }

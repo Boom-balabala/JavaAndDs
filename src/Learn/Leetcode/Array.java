@@ -49,6 +49,49 @@ public class Array {
         return res;
     }
 
+    // 41. 缺少的第一个正数
+    public int firstMissingPositive(int[] nums) {
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] < nums.length && nums[i] >= 0) {
+                swap(nums, i, nums[i]);
+            }
+        }
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] != i) {
+                return i;
+            }
+        }
+        return nums.length;
+    }
+
+
+    // 75.颜色分类
+    public void swap(int[] num, int left, int right) {
+        int temp = num[left];
+        num[left] = num[right];
+        num[right] = temp;
+    }
+
+    public void sortColors(int[] nums) {
+        int left = 0;
+        int right = nums.length - 1;
+        int p = 0;
+        while (p <= right) {
+            if (nums[p] == 1) {
+                p++;
+            } else if (nums[p] == 0) {
+                swap(nums, left, p);
+                left++;
+            } else {
+                swap(nums, right, p);
+                right--;
+            }
+            if (p < left) {
+                p = left;
+            }
+        }
+    }
+
     // 80. 删除有序数组中的重复项
     public int removeDuplicates(int[] nums) {
         if (nums.length == 0 || nums.length == 1) {
@@ -73,6 +116,23 @@ public class Array {
             }
         }
         return insertIndex;
+    }
+
+    // 169.多数元素
+    public int majorityElement(int[] nums) {
+        int target = 0;
+        int count = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (count == 0) {
+                target = nums[i];
+                count++;
+            } else if (target != nums[i]) {
+                count--;
+            } else {
+                count++;
+            }
+        }
+        return target;
     }
 
     // [209. 长度最小的子数组](https://leetcode.cn/problems/minimum-size-subarray-sum/)
@@ -135,6 +195,28 @@ public class Array {
         return merged.toArray(new int[merged.size()][]);
     }
 
+    /**
+     * 713.乘积小于k的子数组
+     *
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int numSubarrayProductLessThanK(int[] nums, int k) {
+        int left = 0;
+        int count = 0;
+        int ars = 1;
+        for (int i = 0; i < nums.length; i++) {
+            ars *= nums[i];
+            if (ars >= k && left < nums.length) {
+                ars /= nums[left];
+                left++;
+            }
+            count += i - left + 1;
+        }
+        return count;
+    }
+
     // 974. 和可被 K 整除的子数组
     // 给定一个整数数组 nums 和一个整数 k ，返回其中元素之和可被 k 整除的非空 子数组 的数目。
     // (si-sj)&k==0
@@ -156,6 +238,33 @@ public class Array {
             }
         }
         return res;
+    }
+
+    /**
+     * 1004 连续 1 的最大个数
+     * 给定一个二进制数组 nums 和一个整数 k，假设最多可以翻转 k 个 0 ，则返回执行操作后 数组中连续 1 的最大个数 。
+     *
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int longestOnes(int[] nums, int k) {
+        int left = 0;
+        int zeroCount = 0;
+        int max = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 0) {
+                zeroCount++;
+                while (zeroCount > k) {
+                    if (nums[left] == 0) {
+                        zeroCount--;
+                    }
+                    left++;
+                }
+            }
+            max = Math.max(max, i - left + 1);
+        }
+        return max;
     }
 
     /**
@@ -215,8 +324,8 @@ public class Array {
                 diff[end] -= count;
             }
         }
-        for (int i = 1;i<diff.length;i++){
-            diff[i] = diff[i-1]+diff[i];
+        for (int i = 1; i < diff.length; i++) {
+            diff[i] = diff[i - 1] + diff[i];
         }
         return diff;
     }
@@ -262,12 +371,50 @@ public class Array {
 
     }
 
+    /**
+     * 1658. 将 x 减到 0 的最小操作数
+     * 给你一个整数数组 nums 和一个整数 x 。
+     * <p>
+     * 每一次操作时，你应当移除数组 nums 最左边或最右边的元素，然后从 x 中减去该元素的值。
+     * <p>
+     * 请注意，需要 修改 数组以供接下来的操作使用。
+     */
+
+    public int minOperations(int[] nums, int x) {
+        int sum = Arrays.stream(nums).sum();
+        int left = 0;
+        int max = -1;
+        int target = sum - x;
+        if (target < 0) {
+            return -1;
+        }
+        sum = 0;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            if (sum > target) {
+                while (sum > target) {
+                    sum -= nums[left];
+                    left++;
+                }
+            }
+            if (sum == target) {
+                max = Math.max(max, i - left + 1);
+            }
+        }
+        return max == -1 ? -1 : nums.length - max;
+    }
+
     public static void main(String[] args) {
-        //test carPooling
-        int[][] trips = new int[][]{{2, 1, 5}, {3, 5, 7}};
-        int capacity = 3;
+//        //test carPooling
+//        int[][] trips = new int[][]{{2, 1, 5}, {3, 5, 7}};
+//        int capacity = 3;
         Array array = new Array();
-        System.out.println(array.carPooling(trips, capacity));
+//        System.out.println(array.carPooling(trips, capacity));
+
+        // 1658. 将 x 减到 0 的最小操作数
+        int[] nums = new int[]{3,4,-1,1};
+        System.out.println(array.firstMissingPositive(nums));
+
 
     }
 }
