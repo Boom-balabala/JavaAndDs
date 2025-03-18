@@ -173,13 +173,36 @@ public class Array {
 
     }
 
-    public static void main(String[] args) {
+
+    /**
+     * 阿里云笔试
+     */
+
+    public void test() {
         Scanner in = new Scanner(System.in);
-        int size = in.nextInt();
-        int[] hours = new int[size];
-        for (int i = 0; i < size; i++) {
-            hours[i] = in.nextInt();
+        int n = in.nextInt();
+        int m = in.nextInt();
+        int max = 0;
+        PriorityQueue<Integer> queue = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1 - o2;
+            }
+        });
+        for (int i = 0; i < n; i++) {
+            int num = in.nextInt();
+            queue.add(num);
+            max = Math.max(max, num);
         }
-        System.out.println(new Array().longestWPI(hours));
+        for (int i = 0; i < m; i++) {
+            int temp = queue.remove() + in.nextInt();
+            queue.add(temp);
+            max = Math.max(max,temp);
+            System.out.println(max);
+        }
+    }
+    
+    public static void main(String[] args) {
+        new Array().test();
     }
 }
