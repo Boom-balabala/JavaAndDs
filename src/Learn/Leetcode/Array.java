@@ -3,32 +3,54 @@ package Learn.Leetcode;
 import java.util.*;
 
 public class Array {
+    // 11.
+    // 给定一个长度为 n 的整数数组 height 。有 n 条垂线，第 i 条线的两个端点是 (i, 0) 和 (i, height[i]) 。
+    // 找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+    // 返回容器可以储存的最大水量。
+    public int maxArea(int[] height) {
+        int left = 0;
+        int right = height.length - 1;
+        int res = 0;
+        while (left <= right) {
+            res = Math.max(Math.min(height[left], height[right]) * (right - left), res);
+            if (height[left] < height[right]) {
+                left++;
+            } else right--;
+        }
+        return res;
+    }
+
     // [15. 三数之和](https://leetcode.cn/problems/3sum/)
     private List<List<Integer>> twoSum(int[] nums, int start, int target, int flag) {
+        Arrays.sort(nums);
         List<List<Integer>> res = new ArrayList<>();
-        List<Integer> temp = new ArrayList<>();
-        int left = start;
-        int right = nums.length - 1;
-        while (left < right) {
-            int sum = nums[left] + nums[right];
-            if (sum == target) {
-                temp.add(flag);
-                temp.add(nums[left]);
-                temp.add(nums[right]);
-                res.add(new ArrayList<>(temp));
-                temp.clear();
-                right--;
-                left++;
-                while (left < right && nums[left] == nums[left - 1]) {
-                    left++;
-                }
-                while (left < right && nums[right] == nums[right + 1]) {
+        for (int i = 0; i < nums.length - 2; i++) {
+            while (i != 0 && nums[i] == nums[i - 1]) {
+                i++;
+            }
+            if (i >= nums.length - 2) {
+                break;
+            }
+            if (nums[i] + nums[i + 1] + nums[i + 2] > 0) {
+                break;
+            } else if (nums[i] + nums[nums.length - 1] + nums[nums.length - 2] < 0) {
+                continue;
+            }
+            int left = i + 1;
+            int right = nums.length - 1;
+            while (left < right) {
+                if (nums[i] + nums[left] + nums[right] > 0) {
                     right--;
+                } else if (nums[i] + nums[left] + nums[right] < 0) {
+                    left++;
+                } else {
+                    List<Integer> temp = new ArrayList<>();
+                    temp.add(nums[i]);
+                    temp.add(nums[left]);
+                    temp.add(nums[right]);
+                    res.add(temp);
+                    break;
                 }
-            } else if (sum < target) {
-                left++;
-            } else {
-                right--;
             }
         }
         return res;
@@ -62,6 +84,23 @@ public class Array {
             }
         }
         return nums.length;
+    }
+
+    // 42. 接雨水
+    // 给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+    public int trap(int[] height) {
+        int n = height.length;
+        int[] maxl = new int[n];
+        int[] maxr = new int[n];
+        for (int i = 0; i < n; i++) {
+            maxl[i] = i == 0 ? height[0] : Math.max(height[i], maxl[i - 1]);
+            maxr[n - i - 1] = i == 0 ? height[n - 1] : Math.max(height[n - i - 1], maxr[n - i]);
+        }
+        int res = 0;
+        for (int i = 1; i < n; i++) {
+            res += Math.min(maxl[i], maxr[i]) - height[i];
+        }
+        return res;
     }
 
 
@@ -412,7 +451,7 @@ public class Array {
 //        System.out.println(array.carPooling(trips, capacity));
 
         // 1658. 将 x 减到 0 的最小操作数
-        int[] nums = new int[]{3,4,-1,1};
+        int[] nums = new int[]{3, 4, -1, 1};
         System.out.println(array.firstMissingPositive(nums));
 
 

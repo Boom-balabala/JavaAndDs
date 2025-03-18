@@ -287,40 +287,36 @@ public class TraceBack {
     }
 
     /** [131. 分割回文串](<a href="https://leetcode.cn/problems/palindrome-partitioning/">...</a>) */
-    private boolean isPalindrome(String s) {
-        if (s.isEmpty()) {
+    List<List<String>> res131 = new ArrayList<>();
+    private boolean isReaver(String s){
+        if(s==null||s.isEmpty()){
             return false;
         }
-        for (int i = 0, j = s.length() - 1; i <= j; i++, j--) {
-            if (s.charAt(i) == s.charAt(j)) {
-                continue;
-            } else {
+        for (int i = 0;i<s.length()/2;i++){
+            if (s.charAt(i)!=s.charAt(s.length()-i-1)){
                 return false;
             }
         }
         return true;
     }
 
-    private void partition(String s, int startIndex, List<String> temp, List<List<String>> res) {
-        if (startIndex == s.length()) {
-            res.add(new ArrayList<>(temp));
+    private void rever(String s,int startIndex,List<String> temp){
+        if (startIndex==s.length()){
+            res131.add(new ArrayList<>(temp));
             return;
-        } else {
-            for (int i = startIndex; i < s.length(); i++) {
-                if (isPalindrome(s.substring(startIndex, i + 1))) {
-                    temp.add(s.substring(startIndex, i + 1));
-                    partition(s, i + 1, temp, res);
-                    temp.removeLast();
-                }
+        }
+        for(int i = startIndex;i<s.length();i++) {
+            String str = s.substring(startIndex,i+1);
+            if (isReaver(str)){
+                temp.add(str);
+                rever(s,i+1,temp);
+                temp.removeLast();
             }
         }
     }
-
     public List<List<String>> partition(String s) {
-        List<String> tep = new ArrayList<>();
-        List<List<String>> res = new ArrayList<>();
-        partition(s, 0, tep, res);
-        return res;
+        rever(s,0,new ArrayList<>());
+        return res131;
     }
 
     /**

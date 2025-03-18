@@ -20,7 +20,7 @@ public class Hash {
         public void put(int key, int value) {
             map.put(key, value);
             if (map.size() > capacity) {
-                map.remove(map.keySet().iterator().next());
+                map.pollFirstEntry();
             }
         }
     }
