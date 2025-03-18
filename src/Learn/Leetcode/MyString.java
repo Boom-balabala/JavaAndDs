@@ -1,33 +1,32 @@
 package Learn.Leetcode;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MyString {
-    // 3. 无重复字符的最长子串
+    /**
+     * 给定一个字符串 s ，请你找出其中不含有重复字符的 最长 子串 的长度。
+     *
+     * @param s
+     * @return
+     */
     public int lengthOfLongestSubstring(String s) {
-        int fast = 0;
-        int slow = 0;
-        int maxlength = 0;
-        char[] str = s.toCharArray();
-        Set<Character> myset = new HashSet<>();
-        for (fast = 0; fast < str.length; fast++) {
-            // 右边遇到重复元素，左边收缩
-            if (myset.contains(str[fast])){
-                while (str[slow]!=str[fast]){
-                    myset.remove(str[slow]);
-                    slow++;
+        int left = 0;
+        int max = 0;
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (!map.containsKey(c)) {
+                map.put(c, i);
+            } else {
+                if (map.get(c) >= left) {
+                    left = map.get(c);
+                    left++;
                 }
-                slow++;
-            }else{
-                myset.add(str[fast]);
+                map.put(c, i);
             }
-            maxlength = Math.max(myset.size(),maxlength);
+            max = Math.max(max, i - left + 1);
         }
-
-        return maxlength;
+        return max;
     }
 
     // [28.
@@ -78,6 +77,57 @@ public class MyString {
         }
     }
 
+    /**
+     * 438. 找到字符串中所有字母异位词
+     * 给定两个字符串 s 和 p，找到 s 中所有 p 的 异位词 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
+     */
+    private boolean judge(int[] nums) {
+        for (int num : nums) {
+            if (num != Integer.MIN_VALUE && num != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<Integer> findAnagrams(String s, String p) {
+        int notExists = Integer.MIN_VALUE;
+        int[] need = new int[26];
+        List<Integer> res = new ArrayList<>();
+        Arrays.fill(need, notExists);
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < p.length(); i++) {
+            need[p.charAt(i) - 'a'] = need[p.charAt(i) - 'a'] == notExists ? 1 : need[p.charAt(i) - 'a'] + 1;
+        }
+        int left = 0;
+        int window = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            int index = c - 'a';
+            window = i - left + 1;
+            // 不存在，窗口收缩
+            if (need[index] == notExists) {
+                for (int j = left; j < i; j++) {
+                    char back = s.charAt(j);
+                    need[back - 'a']++;
+                }
+                left = i + 1;
+                continue;
+            }
+            need[index]--;
+            if (window == p.length()) {
+                if (need[index] == 0) {
+                    if (judge(need)) {
+                        res.add(left);
+                    }
+                }
+                need[s.charAt(left) - 'a']++;
+                left++;
+            }
+        }
+        return res;
+    }
+
     // [541. 反转字符串 II](https://leetcode.cn/problems/reverse-string-ii/)
     private void reversePartString(char[] s, int left, int right) {
         while (left < right) {
@@ -105,9 +155,14 @@ public class MyString {
         return new String(s_arr);
     }
 
+    // 32 最长有效括号子串的长度
+    // 给你一个只包含 '(' 和 ')' 的字符串，找出最长有效（格式正确且连续）括号子串的长度。
+    public int longestValidParentheses(String s) {
+        return 0;
+    }
+
     public static void main(String[] args) {
         MyString myString = new MyString();
-        int res = myString.KMP("hello", "ll");
-        System.out.println(res);
+        System.out.println(myString.findAnagrams("abab", "ab"));
     }
 }
