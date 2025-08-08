@@ -4,11 +4,11 @@ import java.util.*;
 
 
 public class Hash {
-    class LRUCache {
+    class LRUCacheSimple {
         int capacity;
         LinkedHashMap<Integer, Integer> map;
 
-        public LRUCache(int capacity) {
+        public LRUCacheSimple(int capacity) {
             map = new LinkedHashMap<>(capacity, 0.75f, true);
             this.capacity = capacity;
         }
@@ -21,6 +21,91 @@ public class Hash {
             map.put(key, value);
             if (map.size() > capacity) {
                 map.pollFirstEntry();
+            }
+        }
+    }
+
+    class LRUCache {
+
+        class Node {
+            int key;
+            int val;
+            Node pre;
+            Node next;
+
+            public Node(int key, int val) {
+                this.key = key;
+                this.val = val;
+                pre = null;
+                next = null;
+            }
+        }
+
+        int size;
+        int capacity;
+        Map<Integer, Node> map;
+        Node head;
+        Node last;
+
+        public LRUCache(int capacity) {
+            this.capacity = capacity;
+            this.size = 0;
+            map = new HashMap<>();
+            head = new Node(-1, -1);
+            last = new Node(-1, -1);
+            head.next = last;
+            last.pre = head;
+        }
+
+        public int get(int key) {
+            if (!map.containsKey(key)) {
+                return -1;
+            }
+            Node node = map.get(key);
+            // 移除尾部
+            Node nxt = node.next;
+            Node prev = node.pre;
+            prev.next = nxt;
+            nxt.pre = prev;
+            // 插入头部
+            Node headNext = head.next;
+            node.next = headNext;
+            headNext.pre = node;
+            node.pre = head;
+            head.next = node;
+            return node.val;
+        }
+
+        public void put(int key, int value) {
+            if (map.containsKey(key)){
+                Node node = map.get(key);
+                // 移除尾部
+                Node nxt = node.next;
+                Node prev = node.pre;
+                prev.next = nxt;
+                nxt.pre = prev;
+                // 插入头部
+                Node headNext = head.next;
+                node.next = headNext;
+                headNext.pre = node;
+                node.pre = head;
+                head.next = node;
+                node.val = value;
+                return;
+            }
+            Node node = new Node(key,value);
+            map.put(key, node);
+            node.pre = head;
+            node.next = head.next;
+            head.next.pre = node;
+            head.next = node;
+            size++;
+            if (size > capacity) {
+                Node removeNode = last.pre;
+                removeNode.pre.next = last;
+                last.pre = removeNode.pre;
+                map.remove(removeNode.key);
+                size--;
             }
         }
     }

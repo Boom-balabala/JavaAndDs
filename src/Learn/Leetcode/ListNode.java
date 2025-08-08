@@ -107,7 +107,7 @@ public class ListNode {
             if (p == null) {
                 break;
             }
-            pre.next = reverseKhelper(pre.next, k-1);
+            pre.next = reverseKhelper(pre.next, k - 1);
             for (int i = 0; i < k; i++) {
                 pre = pre.next;
             }
@@ -155,6 +155,33 @@ public class ListNode {
         head.next.next = head;
         head.next = successor;
         return last;
+    }
+
+    // 92. 反转链表 II
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        ListNode fakehead = new ListNode(-1);
+        fakehead.next = head;
+        ListNode pre = fakehead;
+        ListNode cur = head;
+        while (cur != null && left > 1) {
+            pre = pre.next;
+            cur = cur.next;
+            left--;
+            right--;
+        }
+        ListNode lastleft = pre;
+        ListNode firstright = cur;
+        ListNode prev = null;
+        while (cur != null && right > 0) {
+            ListNode nxt = cur.next;
+            cur.next = prev;
+            prev = cur;
+            cur = nxt;
+            right--;
+        }
+        lastleft.next = prev;
+        firstright.next = cur;
+        return fakehead.next;
     }
 
     // [142. 环形链表 II](https://leetcode.cn/problems/linked-list-cycle-ii/)
@@ -240,22 +267,6 @@ public class ListNode {
         return pre;
     }
 
-    public ListNode reverseBetween(ListNode head, int left, int right) {
-        if (left == right || head == null || head.next == null) {
-            return head;
-        }
-        int length = right - left + 1;
-        ListNode fakehead = new ListNode(-1);
-        fakehead.next = head;
-        ListNode p = fakehead;
-        for (int i = 0; i < left - 1; i++) {
-            p = p.next;
-        }
-        ListNode starter = p.next;
-        p.next = null;
-        p.next = reverseHelper(starter, length);
-        return fakehead.next;
-    }
 
     // 递归
     private ListNode reverse(ListNode head) {

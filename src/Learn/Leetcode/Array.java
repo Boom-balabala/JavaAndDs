@@ -70,34 +70,36 @@ public class Array {
         }
         return res;
     }
+
     // 31. 下一个排列
     public void nextPermutation(int[] nums) {
         int n = nums.length;
         int swapIndex1 = -1;
         int swapIndex2 = -1;
-        for (int i = n-1;i>0;i--){
-            if(nums[i]>nums[i-1]){
-                swapIndex1 = i-1;
+        for (int i = n - 1; i > 0; i--) {
+            if (nums[i] > nums[i - 1]) {
+                swapIndex1 = i - 1;
                 break;
             }
         }
-        if(swapIndex1==-1){
+        if (swapIndex1 == -1) {
             Arrays.sort(nums);
             return;
         }
-        for(int i = n-1;i>swapIndex1+1;i--){
-            if(nums[swapIndex1]<nums[i]){
+        for (int i = n - 1; i > swapIndex1 + 1; i--) {
+            if (nums[swapIndex1] < nums[i]) {
                 swapIndex2 = i;
             }
         }
-        if(swapIndex2 != -1){
-            int temp  = nums[swapIndex2];
+        if (swapIndex2 != -1) {
+            int temp = nums[swapIndex2];
             nums[swapIndex2] = nums[swapIndex1];
             nums[swapIndex1] = temp;
         }
-        Arrays.sort(nums,swapIndex1+1,n);
+        Arrays.sort(nums, swapIndex1 + 1, n);
         return;
     }
+
     // 41. 缺少的第一个正数
     public int firstMissingPositive(int[] nums) {
         for (int i = 0; i < nums.length; i++) {
@@ -129,7 +131,6 @@ public class Array {
         }
         return res;
     }
-
 
     // 75.颜色分类
     public void swap(int[] num, int left, int right) {
@@ -201,22 +202,6 @@ public class Array {
         return target;
     }
 
-    // [209. 长度最小的子数组](https://leetcode.cn/problems/minimum-size-subarray-sum/)
-    public int minSubArrayLen(int target, int[] nums) {
-        int result = Integer.MAX_VALUE;
-        int sum = 0;
-        int left = 0;
-        for (int right = 0; right < nums.length; right++) {
-            sum += nums[right];
-            while (sum >= target) {
-                result = Math.min(result, right - left + 1);
-                sum = sum - nums[left];
-                left++;
-            }
-        }
-        return result == Integer.MAX_VALUE ? 0 : result;
-    }
-
     // 189. 轮转数组
     private void helper(int[] nums, int start, int end) {
         int left = start;
@@ -259,6 +244,24 @@ public class Array {
             }
         }
         return merged.toArray(new int[merged.size()][]);
+    }
+
+    //209. 长度最小的子数组
+    public int minSubArrayLen(int target, int[] nums) {
+        int res = Integer.MAX_VALUE;
+        int left = 0;
+        int sum = 0;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            if (sum >= target) {
+                while (sum >= target) {
+                    res = Math.min(res, i - left + 1);
+                    sum -=nums[left];
+                    left++;
+                }
+            }
+        }
+        return res==Integer.MAX_VALUE?0:res;
     }
 
     /**

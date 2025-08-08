@@ -4,29 +4,29 @@ import java.util.*;
 
 public class MyString {
     /**
-     * 给定一个字符串 s ，请你找出其中不含有重复字符的 最长 子串 的长度。
+     * 3.给定一个字符串 s ，请你找出其中不含有重复字符的 最长 子串 的长度。
      *
      * @param s
      * @return
      */
     public int lengthOfLongestSubstring(String s) {
-        int left = 0;
-        int max = 0;
         Map<Character, Integer> map = new HashMap<>();
+        int maxlength = 0;
+        int left = 0;
         for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            if (!map.containsKey(c)) {
-                map.put(c, i);
+            if (!map.containsKey(s.charAt(i))) {
+                map.put(s.charAt(i), i);
             } else {
-                if (map.get(c) >= left) {
-                    left = map.get(c);
-                    left++;
+                int prev = map.remove(s.charAt(i));
+                // 如果当前节点在滑动窗口内
+                if (left <= prev) {
+                    left = prev + 1;
                 }
-                map.put(c, i);
+                map.put(s.charAt(i), i);
             }
-            max = Math.max(max, i - left + 1);
+            maxlength = Math.max(maxlength, i-left+1);
         }
-        return max;
+        return maxlength;
     }
 
     // [28.
