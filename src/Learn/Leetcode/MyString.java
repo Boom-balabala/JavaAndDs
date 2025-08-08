@@ -64,6 +64,17 @@ public class MyString {
         return j;
     }
 
+    //136. 只出现一次的数字
+    public int singleNumber(int[] nums) {
+        if (nums.length==1){
+            return nums[0];
+        }
+        int res = nums[0];
+        for (int i =1;i<nums.length;i++){
+            res = res ^ nums[i];
+        }
+        return res;
+    }
     // [344. 反转字符串](https://leetcode.cn/problems/reverse-string/)
     public void reverseString(char[] s) {
         int left = 0;

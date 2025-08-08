@@ -1,6 +1,7 @@
 package Learn.Leetcode;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -66,13 +67,12 @@ public class Dynamic {
      * 70. 爬楼梯 假设你正在爬楼梯。需要 n 阶你才能到达楼顶。 每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
      */
     public int climbStairs(int n) {
+        // dp[i] 表示爬到第i阶的方法数目
         int[] dp = new int[n + 1];
-        for (int i = 1; i < n + 1; i++) {
-            if (i <= 2) {
-                dp[i] = i;
-            } else {
-                dp[i] = dp[i - 1] + dp[i - 2];
-            }
+        dp[0] = 1;
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
         }
         return dp[n];
     }
@@ -91,23 +91,39 @@ public class Dynamic {
         return dp[n];
     }
 
-    // 322. 零钱兑换
-    public int coinChange(int[] coins, int amount) {
-        int[] dp = new int[amount + 1];
-        Arrays.fill(dp, Integer.MAX_VALUE);
-        dp[0] = 0;
-        for (int i = 1; i < dp.length; i++) {
-            for (int j = 0; j < coins.length; j++) {
-                if (i < coins[j]) {
-                    continue;
-                } else {
-                    if (dp[i - coins[j]] != Integer.MAX_VALUE) {
-                        dp[i] = Math.min(dp[i - coins[j]] + 1, dp[i]);
-                    }
-                }
-            }
+    //139. 单词拆分
+    public boolean wordBreak(String s, List<String> wordDict) {
+
+    }
+
+    /**
+     * 打家劫舍 专题
+     */
+    // 198. 打家劫舍：给定一个代表每个房屋存放金额的非负整数数组，计算你不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。
+    public int rob(int[] nums) {
+        if (nums.length == 0) {
+            return 0;
+        } else if (nums.length == 1) {
+            return nums[0];
         }
-        return dp[amount] == Integer.MAX_VALUE ? -1 : dp[amount];
+        // 偷到第 i 家的最大收益
+        int[] dp = new int[nums.length + 1];
+        dp[0] = 0;
+        dp[1] = nums[0];
+        for (int i = 2; i <= nums.length; i++) {
+            dp[i] = Math.max(dp[i - 2] + nums[i - 1], dp[i - 1]);
+        }
+        return dp[nums.length];
+    }
+
+    /**
+     * 322. 零钱兑换
+     * @param coins
+     * @param amount
+     * @return
+     */
+    public int coinChange(int[] coins, int amount) {
+
     }
 
     /**

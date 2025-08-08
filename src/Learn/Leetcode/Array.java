@@ -132,6 +132,70 @@ public class Array {
         return res;
     }
 
+    /**
+     * 55. 跳跃游戏
+     * 给定一个非负整数数组 nums，你最初位于数组的第一个下标。
+     * 数组中的每个元素代表你在该位置可以跳跃的最大长度。
+     * 判断你是否能够到达最后一个下标。
+     *
+     * @param nums 非负整数数组，表示每个位置可以跳跃的最大长度
+     * @return 如果可以到达最后一个下标返回true，否则返回false
+     */
+    public boolean canJump(int[] nums) {
+        // cover表示当前能到达的最远下标
+        int cover = 0;
+        // 遍历数组，i表示当前位置
+        for (int i = 0; i < nums.length; i++) {
+            // 如果当前位置超过了能到达的最远位置，说明无法继续前进
+            if (i > cover) {
+                return false;
+            }
+            // 更新能到达的最远位置：当前位置+跳跃距离 与 原最远位置 的较大值
+            cover = Math.max(cover, i + nums[i]);
+        }
+        // 最后判断最远位置是否能到达数组末尾
+        return cover >= nums.length - 1;
+    }
+
+    /**
+     * 45. 跳跃游戏 II
+     * 给定一个长度为 n 的 0 索引整数数组 nums。初始位置为 nums[0]。
+     * 每个元素 nums[i] 表示从索引 i 向前跳转的最大长度。
+     * 返回到达 nums[n - 1] 的最小跳跃次数。
+     *
+     * @param nums 非负整数数组，表示每个位置可以跳跃的最大长度
+     * @return 到达最后一个位置的最小跳跃次数
+     */
+    public int jump(int[] nums) {
+        // 特殊情况：数组长度为0或1时，不需要跳跃
+        if (nums.length == 0 || nums.length == 1) {
+            return 0;
+        }
+        // curCover表示当前这一跳能到达的最远位置
+        int curCover = 0;
+        // maxCover表示在当前范围内下一跳能到达的最远位置
+        int maxCover = 0;
+        // 跳跃次数计数器
+        int count = 0;
+        // 遍历数组
+        for (int i = 0; i < nums.length; i++) {
+            // 更新下一跳能到达的最远位置
+            maxCover = Math.max(maxCover, i + nums[i]);
+            // 如果下一跳已经能到达终点，则返回当前跳跃次数+1
+            if (maxCover >= nums.length - 1) {
+                return count + 1;
+            }
+            // 如果已经遍历完当前这一跳的所有位置
+            if (i == curCover) {
+                // 增加跳跃次数
+                count++;
+                // 更新当前这一跳能到达的最远位置为下一跳的最远位置
+                curCover = maxCover;
+            }
+        }
+        return count;
+    }
+
     // 75.颜色分类
     public void swap(int[] num, int left, int right) {
         int temp = num[left];
@@ -256,12 +320,30 @@ public class Array {
             if (sum >= target) {
                 while (sum >= target) {
                     res = Math.min(res, i - left + 1);
-                    sum -=nums[left];
+                    sum -= nums[left];
                     left++;
                 }
             }
         }
-        return res==Integer.MAX_VALUE?0:res;
+        return res == Integer.MAX_VALUE ? 0 : res;
+    }
+
+    // 274. H 指数
+    public int hIndex(int[] citations) {
+        int n = citations.length;
+        int[] h = new int[n + 1];
+        for (int c : citations) {
+            int cite = Math.min(c, n);
+            h[cite]++;
+        }
+        int res = 0;
+        for (int i = n;i>=0;i--){
+            res += h[i];
+            if(res>=i){
+                return i;
+            }
+        }
+        return res;
     }
 
     /**

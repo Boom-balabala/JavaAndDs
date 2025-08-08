@@ -77,7 +77,7 @@ public class Hash {
         }
 
         public void put(int key, int value) {
-            if (map.containsKey(key)){
+            if (map.containsKey(key)) {
                 Node node = map.get(key);
                 // 移除尾部
                 Node nxt = node.next;
@@ -93,7 +93,7 @@ public class Hash {
                 node.val = value;
                 return;
             }
-            Node node = new Node(key,value);
+            Node node = new Node(key, value);
             map.put(key, node);
             node.pre = head;
             node.next = head.next;
@@ -109,6 +109,103 @@ public class Hash {
             }
         }
     }
+
+    // 380. O(1) 时间插入、删除和获取随机元素
+    class RandomizedSet {
+        List<Integer> vals;
+        Map<Integer, Integer> map;
+
+        public RandomizedSet() {
+            vals = new ArrayList<>();
+            map = new HashMap<>();
+        }
+
+        //当元素 val 不存在时，向集合中插入该项，并返回 true ；否则，返回 false 。
+        public boolean insert(int val) {
+            if (map.containsKey(val)) {
+                return false;
+            }
+            vals.add(val);
+            map.put(val, vals.size() - 1);
+            return true;
+        }
+
+        //当元素 val 存在时，从集合中移除该项，并返回 true ；否则，返回 false 。
+        public boolean remove(int val) {
+            if (!map.containsKey(val)) {
+                return false;
+            }
+            int index = map.remove(val);
+            if (index == vals.size() - 1) {
+                vals.removeLast();
+                return true;
+            }
+            Integer last = vals.getLast();
+            vals.set(index, last);
+            map.put(last, index);
+            vals.removeLast();
+            return true;
+        }
+
+        public int getRandom() {
+            Random rand = new Random();
+            int index = rand.nextInt(0, vals.size());
+            int val = vals.get(index);
+            return val;
+        }
+    }
+
+
+    public static Map<Character, Integer> getNumMapper() {
+        Map<Character, Integer> mymap = new HashMap<>();
+        mymap.put('I', 1);
+        mymap.put('V', 5);
+        mymap.put('X', 10);
+        mymap.put('L', 50);
+        mymap.put('C', 100);
+        mymap.put('D', 500);
+        mymap.put('M', 1000);
+        return mymap;
+    }
+
+    // 12. 整数转罗马数字
+    public String intToRoman(int num) {
+        // 定义数值和对应的罗马数字映射数组，按从大到小排序
+        // 包含特殊的减法组合情况（如4、9、40、90、400、900）
+        int[] values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        String[] symbols = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+        StringBuilder result = new StringBuilder();
+
+        // 从最大的数值开始处理
+        for (int i = 0; i < values.length; i++) {
+            // 只要当前数值还能被减去，就继续处理
+            while (num >= values[i]) {
+                // 减去当前数值
+                num -= values[i];
+                // 添加对应的罗马数字符号
+                result.append(symbols[i]);
+            }
+        }
+
+        return result.toString();
+    }
+
+    // 13. 罗马数字转整数
+    public int romanToInt(String s) {
+        Map<Character, Integer> map = getNumMapper();
+        int sum = 0;
+        int pre = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int num = map.get(s.charAt(i));
+            if (num > pre) {
+                sum -= 2 * pre;
+            }
+            sum += num;
+            pre = num;
+        }
+        return sum;
+    }
+
 
     //[202. 快乐数](https://leetcode.cn/problems/happy-number/)
     private int get_sum(int n) {
