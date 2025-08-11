@@ -2,8 +2,12 @@ package Learn.Leetcode;
 
 import java.util.*;
 
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class Hash {
+
     class LRUCacheSimple {
         int capacity;
         LinkedHashMap<Integer, Integer> map;
@@ -206,6 +210,25 @@ public class Hash {
         return sum;
     }
 
+    //128. 最长连续序列
+    public int longestConsecutive(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        for (int num : nums) {
+            set.add(num);
+        }
+        int max = 0;
+        for (int num : set) {
+            if (set.contains(num - 1)) {
+                continue;
+            }
+            int count = 1;
+            while (set.contains(num + count)) {
+                count++;
+            }
+            max = Math.max(count, max);
+        }
+        return max;
+    }
 
     //[202. 快乐数](https://leetcode.cn/problems/happy-number/)
     private int get_sum(int n) {
@@ -227,6 +250,48 @@ public class Hash {
             n = get_sum(n);
         }
         return true;
+    }
+
+    // 205. 同构字符串
+    public boolean isIsomorphic(String s, String t) {
+        int[] sTt = new int[256];
+        int[] tTs = new int[256];
+        Arrays.fill(sTt, -1);
+        Arrays.fill(tTs, -1);
+        for (int i = 0; i < s.length(); i++) {
+            int index = s.charAt(i);
+            int flag = t.charAt(i);
+            if (sTt[index] == -1) {
+                if (tTs[flag] != -1) {
+                    return false;
+                }
+                sTt[index] = flag;
+                tTs[flag] = index;
+            } else {
+                if (sTt[index] != flag || tTs[flag] != index) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // 219. 存在重复元素 II
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (!map.containsKey(nums[i])) {
+                map.put(nums[i], i);
+            } else {
+                int prev = map.get(nums[i]);
+                if (Math.abs(i - prev) <= k) {
+                    return true;
+                } else {
+                    map.put(nums[i], i);
+                }
+            }
+        }
+        return false;
     }
 
     //[242. 有效的字母异位词](https://leetcode.cn/problems/valid-anagram/)
@@ -271,21 +336,19 @@ public class Hash {
 
     // [383. 赎金信](https://leetcode.cn/problems/ransom-note/)
     public boolean canConstruct(String ransomNote, String magazine) {
-        Map<Character, Integer> mymap = new HashMap<>();
+        if (ransomNote.length() > magazine.length()) {
+            return false;
+        }
+        int[] map = new int[26];
         for (int i = 0; i < magazine.length(); i++) {
-            if (mymap.containsKey(magazine.charAt(i))) {
-                mymap.put(magazine.charAt(i), mymap.get(magazine.charAt(i)) + 1);
-            } else
-                mymap.put(magazine.charAt(i), 1);
+            int index = magazine.charAt(i) - 'a';
+            map[index]++;
         }
         for (int i = 0; i < ransomNote.length(); i++) {
-            if (!mymap.containsKey(ransomNote.charAt(i))) {
+            int index = ransomNote.charAt(i) - 'a';
+            map[index]--;
+            if (map[index] < 0) {
                 return false;
-            } else {
-                if (mymap.get(ransomNote.charAt(i)) == 0) {
-                    return false;
-                }
-                mymap.put(ransomNote.charAt(i), mymap.get(ransomNote.charAt(i)) - 1);
             }
         }
         return true;

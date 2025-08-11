@@ -92,9 +92,9 @@ public class Dynamic {
     }
 
     //139. 单词拆分
-    public boolean wordBreak(String s, List<String> wordDict) {
-
-    }
+//    public boolean wordBreak(String s, List<String> wordDict) {
+//
+//    }
 
     /**
      * 打家劫舍 专题
@@ -122,9 +122,9 @@ public class Dynamic {
      * @param amount
      * @return
      */
-    public int coinChange(int[] coins, int amount) {
-
-    }
+//    public int coinChange(int[] coins, int amount) {
+//
+//    }
 
     /**
      * 343. 整数拆分 给定一个正整数 n，将其拆分为至少两个正整数的和，并使这些整数的乘积最大化。 返回你可以获得的最大乘积。 示例 1: 输入: 2 输出: 1 解释: 2 = 1 +
@@ -178,13 +178,13 @@ public class Dynamic {
     }
 
     public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-        int length = in.nextInt();
-        int[] nums = new int[length];
-        for (int i = 0; i < length; i++) {
-            nums[i] = in.nextInt();
-        }
-        int amount = in.nextInt();
-        System.out.println(new Dynamic().coinChange(nums, amount));
+//        Scanner in = new Scanner(System.in);
+//        int length = in.nextInt();
+//        int[] nums = new int[length];
+//        for (int i = 0; i < length; i++) {
+//            nums[i] = in.nextInt();
+//        }
+//        int amount = in.nextInt();
+//        System.out.println(new Dynamic().coinChange(nums, amount));
     }
 }

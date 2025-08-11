@@ -28,74 +28,103 @@ public class MyDeque {
      */
     public String simplifyPath(String path) {
         Deque<String> deque = new ArrayDeque<>();
-        StringBuilder str = new StringBuilder();
-        String[] slots = path.split("/+");
-        for (String slot : slots) {
-            if (Objects.equals(slot, ".") || slot == null || slot.isEmpty()) {
+        String[] strs = path.split("/");
+        for (int i = 0; i < strs.length; i++) {
+            String str = strs[i];
+            if (str == null || str.isEmpty() || str.equals(".")) {
                 continue;
-            } else if (Objects.equals(slot, "..")) {
+            } else if (str.equals("..")) {
                 if (!deque.isEmpty()) {
                     deque.pop();
                 }
             } else {
-                deque.push(slot);
+                deque.push(str);
             }
         }
-/*
-        path = path + '/';
-        for (int i = 0; i < path.length(); i++) {
-            char c = path.charAt(i);
-            if (c != '/') {
-                str.append(c);
-            } else {
-                if (str.isEmpty()) {
-                    continue;
-                } else {
-                    if (String.valueOf(str).equals(".")) {
-                        str.setLength(0);
-                    } else if (String.valueOf(str).equals("..")) {
-                        if (!deque.isEmpty()) {
-                            deque.pop();
-                        }
-                        str.setLength(0);
-                    } else {
-                        deque.push(String.valueOf(str));
-                        str.setLength(0);
-                    }
-                }
-            }
-        }
-*/
         if (deque.isEmpty()) {
             return "/";
         }
+        StringBuilder stringBuilder = new StringBuilder();
         while (!deque.isEmpty()) {
-            str.insert(0, "/" + deque.pop());
+            stringBuilder.insert(0, "/" + deque.pop());
         }
-        return String.valueOf(str.toString());
+        return stringBuilder.toString();
+
     }
 
     // [150. 逆波兰表达式求值](https://leetcode.cn/problems/evaluate-reverse-polish-notation/)
     public int evalRPN(String[] tokens) {
         Deque<Integer> stack = new ArrayDeque<>();
-        for (int i = 0; i < tokens.length; i++) {
-            if ("+".equals(tokens[i])) {
-                stack.push(stack.pop() + stack.pop());
-            } else if ("-".equals(tokens[i])) {
-                int a = stack.pop();
-                int b = stack.pop();
-                stack.push(b - a);
-            } else if ("*".equals(tokens[i])) {
-                stack.push(stack.pop() * stack.pop());
-            } else if ("/".equals(tokens[i])) {
-                int a = stack.pop();
-                int b = stack.pop();
-                stack.push(b / a);
-            } else {
-                stack.push(Integer.parseInt(tokens[i]));
+        for (String str : tokens) {
+            switch (str) {
+                case "+" -> {
+                    int a = stack.pop();
+                    int b = stack.pop();
+                    stack.push(a + b);
+                }
+                case "-" -> {
+                    int a = stack.pop();
+                    int b = stack.pop();
+                    stack.push(b - a);
+                }
+                case "*" -> {
+                    int a = stack.pop();
+                    int b = stack.pop();
+                    stack.push(a * b);
+                }
+                case "/" -> {
+                    int a = stack.pop();
+                    int b = stack.pop();
+                    stack.push(b / a);
+                }
+                case null, default -> stack.push(Integer.valueOf(str));
             }
         }
         return stack.pop();
+    }
+
+    /**
+     * 155. 最小栈
+     * 设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。
+     * <p>
+     * 实现 MinStack 类:
+     * <p>
+     * MinStack() 初始化堆栈对象。
+     * void push(int val) 将元素val推入堆栈。
+     * void pop() 删除堆栈顶部的元素。
+     * int top() 获取堆栈顶部的元素。
+     * int getMin() 获取堆栈中的最小元素。
+     */
+    class MinStack {
+        Deque<Integer> stack;
+        Deque<Integer> minStack;
+
+        public MinStack() {
+            stack = new ArrayDeque<>();
+            minStack = new ArrayDeque<>();
+        }
+
+        public void push(int val) {
+            stack.push(val);
+            if (minStack.isEmpty() || minStack.peek() >= val) {
+                minStack.push(val);
+            }
+        }
+
+        public void pop() {
+            int val = stack.pop();
+            if (val == minStack.peek()) {
+                minStack.pop();
+            }
+        }
+
+        public int top() {
+            return stack.peek();
+        }
+
+        public int getMin() {
+            return minStack.peek();
+        }
     }
 
     // [239. 滑动窗口最大值](https://leetcode.cn/problems/sliding-window-maximum/)

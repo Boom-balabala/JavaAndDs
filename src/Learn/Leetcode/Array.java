@@ -328,6 +328,35 @@ public class Array {
         return res == Integer.MAX_VALUE ? 0 : res;
     }
 
+    // 228. 汇总区间
+    private String build(int start, int end) {
+        return start == end ? "" + start :
+                start +
+                        "->" +
+                        end;
+    }
+
+    public List<String> summaryRanges(int[] nums) {
+        List<String> res = new ArrayList<>();
+        if (nums.length == 0) {
+            return res;
+        }
+        int start = nums[0];
+        int end = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] == end + 1) {
+                end = nums[i];
+            } else {
+                res.add(build(start, end));
+                start = nums[i];
+                end = nums[i];
+            }
+        }
+        res.add(build(start, end));
+        return res;
+
+    }
+
     // 274. H 指数
     public int hIndex(int[] citations) {
         int n = citations.length;
@@ -337,9 +366,9 @@ public class Array {
             h[cite]++;
         }
         int res = 0;
-        for (int i = n;i>=0;i--){
+        for (int i = n; i >= 0; i--) {
             res += h[i];
-            if(res>=i){
+            if (res >= i) {
                 return i;
             }
         }

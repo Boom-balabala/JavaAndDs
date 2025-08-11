@@ -79,38 +79,36 @@ public class ListNode {
     }
 
     // 25 k个一组翻转链表
-    ListNode nextStarter;
-
-    private ListNode reverseKhelper(ListNode head, int k) {
-        if (k == 0) {
-            nextStarter = head.next;
-            return head;
-        }
-        ListNode last = reverseKhelper(head.next, k - 1);
-        head.next.next = head;
-        head.next = nextStarter;
-        return last;
-    }
-
     public ListNode reverseKGroup(ListNode head, int k) {
-        if (head == null || head.next == null || k == 1) {
+        ListNode p = head;
+        int size = 0;
+        while (p != null) {
+            p = p.next;
+            size++;
+        }
+        if (size == 0 || size < k) {
             return head;
         }
-        ListNode fakeHead = new ListNode(-1);
+        ListNode fakeHead = new ListNode();
         fakeHead.next = head;
-        ListNode pre = fakeHead;
-        while (true) {
-            ListNode p = pre;
-            for (int i = 0; i < k && p != null; i++) {
-                p = p.next;
+        ListNode starter = fakeHead;
+        ListNode end = head;
+        ListNode pre = null;
+        ListNode cur = head;
+        while (size >= k) {
+            int count = 0;
+            while (count < k) {
+                ListNode nxt = cur.next;
+                cur.next = pre;
+                pre = cur;
+                cur = nxt;
+                count++;
             }
-            if (p == null) {
-                break;
-            }
-            pre.next = reverseKhelper(pre.next, k - 1);
-            for (int i = 0; i < k; i++) {
-                pre = pre.next;
-            }
+            starter.next = pre;
+            end.next = cur;
+            starter = end;
+            end = cur;
+            size -= k;
         }
         return fakeHead.next;
     }
@@ -155,6 +153,54 @@ public class ListNode {
         head.next.next = head;
         head.next = successor;
         return last;
+    }
+
+    // 82. 删除排序链表中的重复元素 II
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode fh = new ListNode(-101);
+        ListNode p = fh;
+        ListNode fast = head;
+        ListNode slow = head;
+        while (fast != null) {
+            while (fast != null && fast.val == slow.val) {
+                fast = fast.next;
+            }
+            if (slow.next == fast) {
+                p.next = slow;
+                p = p.next;
+                p.next = null;
+            }
+            slow = fast;
+        }
+        return fh.next;
+    }
+
+    // 86. 分隔链表
+    public ListNode partition(ListNode head, int x) {
+        ListNode greaterHead = new ListNode(-1);
+        ListNode slowerHead = new ListNode(-1);
+        ListNode gp = greaterHead;
+        ListNode sp = slowerHead;
+        ListNode p = head;
+        while (p != null) {
+            ListNode nxt = p.next;
+            if (p.val >= x) {
+                gp.next = p;
+                p.next = null;
+                p = nxt;
+                gp = gp.next;
+            } else {
+                sp.next = p;
+                p.next = null;
+                p = nxt;
+                sp = sp.next;
+            }
+        }
+        sp.next = greaterHead.next;
+        return slowerHead.next;
     }
 
     // 92. 反转链表 II
