@@ -196,6 +196,45 @@ public class Array {
         return count;
     }
 
+    // 56 合并区间
+    public int[][] merge(int[][] intervals) {
+        if (intervals.length == 0 || intervals.length == 1) {
+            return intervals;
+        }
+        Arrays.sort(intervals, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                if (o1[0] != o2[0]) {
+                    return o1[0] - o2[0];
+                } else {
+                    return o1[1] - o2[1];
+                }
+            }
+        });
+        List<int[]> res = new ArrayList<>();
+        int start = intervals[0][0];
+        int end = intervals[0][1];
+        for (int i = 1; i < intervals.length; i++) {
+            int[] interval = intervals[i];
+            // 当前不在区间内
+            if (interval[0] > end) {
+                List<Integer> temp = new ArrayList<>();
+                temp.add(start);
+                temp.add(end);
+                res.add(new int[]{start, end});
+                start = interval[0];
+                end = interval[1];
+            } else {
+                end = Math.max(interval[1],end);
+            }
+        }
+        List<Integer> temp = new ArrayList<>();
+        temp.add(start);
+        temp.add(end);
+        res.add(new int[]{start, end});
+        return res.toArray(new int[res.size()][]);
+    }
+
     // 75.颜色分类
     public void swap(int[] num, int left, int right) {
         int temp = num[left];
@@ -284,30 +323,6 @@ public class Array {
         helper(nums, nums.length - k, nums.length);
         helper(nums, 0, nums.length - k);
         helper(nums, 0, nums.length);
-    }
-
-    public int[][] merge(int[][] intervals) {
-        if (intervals.length == 1) {
-            return intervals;
-        }
-        Arrays.sort(
-                intervals,
-                new Comparator<int[]>() {
-                    @Override
-                    public int compare(int[] o1, int[] o2) {
-                        return o1[0] - o2[0];
-                    }
-                });
-        // list.get(i) 代表生成的第i个区间 维度为一行两列 int[2]
-        List<int[]> merged = new ArrayList<int[]>();
-        for (int i = 0; i < intervals.length; i++) {
-            if (merged.isEmpty() || intervals[i][0] > merged.getLast()[1]) {
-                merged.add(intervals[i]);
-            } else {
-                merged.getLast()[2] = Math.max(merged.getLast()[2], intervals[i][1]);
-            }
-        }
-        return merged.toArray(new int[merged.size()][]);
     }
 
     //209. 长度最小的子数组

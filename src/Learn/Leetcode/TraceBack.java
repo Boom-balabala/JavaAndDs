@@ -12,47 +12,58 @@ public class TraceBack {
      * href="https://leetcode.cn/problems/letter-combinations-of-a-phone-number/">...</a>) 给定一个仅包含数字
      * 2-9 的字符串，返回所有它能表示的字母组合。答案可以按 任意顺序 返回。
      */
-    private void letterCombinations(
-            List<String> res,
-            StringBuilder temp,
-            int startIndex,
-            String digits,
-            Map<Character, String> dic) {
-        if (temp.length() == digits.length()) {
-            res.add(new String(temp));
-            return;
-        } else {
-            for (int i = startIndex; i < digits.length(); i++) {
-                char c_start = digits.charAt(startIndex);
-                String value = dic.get(c_start);
-                for (int index = 0; index < value.length(); index++) {
-                    char add = value.charAt(index);
-                    temp.append(add);
-                    letterCombinations(res, temp, i + 1, digits, dic);
-                    temp.deleteCharAt(temp.length() - 1);
-                }
+    private String[] numberToChar = new String[]{"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+    List<String> letterCombinationsRes;
+
+    public void letterCombinationsHelper(String digits, int starter, StringBuilder temp) {
+        if (starter == digits.length()) {
+            if (temp.isEmpty()) {
+                return;
+            } else {
+                letterCombinationsRes.add(temp.toString());
+                return;
             }
+        }
+        int index = digits.charAt(starter) - '0';
+        String str = numberToChar[index];
+        for (int j = 0; j < str.length(); j++) {
+            temp.append(str.charAt(j));
+            letterCombinationsHelper(digits, starter + 1, temp);
+            temp.deleteCharAt(temp.length() - 1);
         }
     }
 
     public List<String> letterCombinations(String digits) {
+        letterCombinationsRes = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();
+        letterCombinationsHelper(digits, 0, stringBuilder);
+        return letterCombinationsRes;
+    }
 
-        List<String> res = new ArrayList<>();
-        if (digits.isEmpty()) {
-            return res;
+    // 22. 括号生成
+    List<String> generateParenthesisRes = new ArrayList<>();
+
+    public void generateParenthesisHelper(int n, int leftCount, int rightCount, StringBuilder sb) {
+        if (leftCount == n && rightCount == n) {
+            generateParenthesisRes.add(sb.toString());
+            return;
         }
-        Map<Character, String> dic = new HashMap<>();
-        dic.put('2', "abc");
-        dic.put('3', "def");
-        dic.put('4', "ghi");
-        dic.put('5', "jkl");
-        dic.put('6', "mno");
-        dic.put('7', "pqrs");
-        dic.put('8', "tuv");
-        dic.put('9', "wxyz");
-        StringBuilder temp = new StringBuilder();
-        letterCombinations(res, temp, 0, digits, dic);
-        return res;
+        if (leftCount > n||rightCount>leftCount) {
+            return;
+        }
+        sb.append("(");
+        generateParenthesisHelper(n, leftCount + 1, rightCount, sb);
+        sb.deleteCharAt(sb.length() - 1);
+        if (leftCount > rightCount) {
+            sb.append(")");
+            generateParenthesisHelper(n, leftCount, rightCount + 1, sb);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+    }
+
+    public List<String> generateParenthesis(int n) {
+        generateParenthesisHelper(n, 0, 0, new StringBuilder());
+        return generateParenthesisRes;
     }
 
     /**
@@ -93,7 +104,9 @@ public class TraceBack {
         return res;
     }
 
-    /** 40. 组合总和 II candidates 中的每个数字在每个组合中只能使用 一次 。 注意：解集不能包含重复的组合。 */
+    /**
+     * 40. 组合总和 II candidates 中的每个数字在每个组合中只能使用 一次 。 注意：解集不能包含重复的组合。
+     */
     private void combinationSum2(
             List<List<Integer>> res,
             List<Integer> temp,
@@ -135,68 +148,59 @@ public class TraceBack {
      *
      * <p>全排列 给定一 个不含重复数字的数组 nums ，返回其 所有可能的全排列 。你可以 按任意顺序 返回答案。
      */
-    public void permutehelper(
-            int[] nums, boolean[] flags, List<Integer> temp, List<List<Integer>> res) {
+    private boolean[] permuteIsUsed;
+    List<List<Integer>> permuteRes = new ArrayList<>();
+
+    private void permuteHelper(int[] nums, List<Integer> temp) {
         if (temp.size() == nums.length) {
-            res.add(new LinkedList(temp));
+            permuteRes.add(new ArrayList<>(temp));
             return;
-        } else {
-            for (int i = 0; i < nums.length; i++) {
-                if (flags[i]) {
-                    continue;
-                } else {
-                    flags[i] = true;
-                    temp.add(nums[i]);
-                    permutehelper(nums, flags, temp, res);
-                    flags[i] = false;
-                    temp.removeLast();
-                }
+        }
+        for (int i = 0; i < nums.length; i++) {
+            if (permuteIsUsed[i]) {
+                continue;
             }
+            permuteIsUsed[i] = true;
+            temp.add(nums[i]);
+            permuteHelper(nums, temp);
+            temp.removeLast();
+            permuteIsUsed[i] = false;
         }
     }
 
     public List<List<Integer>> permute(int[] nums) {
-        List<List<Integer>> res = new LinkedList<>();
-        boolean[] flags = new boolean[nums.length];
-        List<Integer> temp = new ArrayList<>();
-        permutehelper(nums, flags, temp, res);
-        return res;
+        permuteIsUsed = new boolean[nums.length];
+        permuteHelper(nums, new ArrayList<>());
+        return permuteRes;
     }
 
     /**
      * [77. 组合](<a href="https://leetcode.cn/problems/combinations/">...</a>) 给定两个整数 n 和 k，返回范围 [1,
      * n] 中所有可能的 k 个数的组合。
      */
-    private void combine(
-            List<List<Integer>> res, List<Integer> temp, int startIndex, int k, int n) {
+    List<List<Integer>> combineRes = new ArrayList<>();
+
+    public void combineHelper(int n, int k, int starter, List<Integer> temp) {
         if (temp.size() == k) {
-            // res.add(temp)会报错，因为temp是引用类型，反复加入的temp实际上操作的是同一个对象。
-            res.add(new ArrayList<>(temp));
+            combineRes.add(new ArrayList<>(temp));
             return;
-        } else if (startIndex > n) {
+        } else if (k - temp.size() > n - starter + 1) {
             return;
-        } else {
-            for (int i = startIndex; i <= n; i++) {
-                // 剪枝s
-                if (n - i < k - (temp.size() + 1)) {
-                    return;
-                }
-                temp.add(i);
-                combine(res, temp, i + 1, k, n);
-                temp.removeLast();
-            }
         }
+        temp.add(starter);
+        combineHelper(n, k, starter + 1, temp);
+        temp.removeLast();
+        combineHelper(n, k, starter + 1, temp);
     }
 
     public List<List<Integer>> combine(int n, int k) {
-        List<List<Integer>> res = new ArrayList<>();
-        List<Integer> temp = new ArrayList<>();
-        combine(res, temp, 1, k, n);
-
-        return res;
+        combineHelper(n, k, 1, new ArrayList<>());
+        return combineRes;
     }
 
-    /** 78. 子集 给你一个整数数组 nums ，数组中的元素 互不相同 。返回该数组所有可能的子集（幂集）。 解集 不能 包含重复的子集。你可以按 任意顺序 返回解集。 */
+    /**
+     * 78. 子集 给你一个整数数组 nums ，数组中的元素 互不相同 。返回该数组所有可能的子集（幂集）。 解集 不能 包含重复的子集。你可以按 任意顺序 返回解集。
+     */
     private void subsets(List<List<Integer>> res, List<Integer> temp, int[] nums, int startIndex) {
         res.add(new ArrayList<>(temp));
         for (int i = startIndex; i < nums.length; i++) {
@@ -286,36 +290,40 @@ public class TraceBack {
         return res;
     }
 
-    /** [131. 分割回文串](<a href="https://leetcode.cn/problems/palindrome-partitioning/">...</a>) */
+    /**
+     * [131. 分割回文串](<a href="https://leetcode.cn/problems/palindrome-partitioning/">...</a>)
+     */
     List<List<String>> res131 = new ArrayList<>();
-    private boolean isReaver(String s){
-        if(s==null||s.isEmpty()){
+
+    private boolean isReaver(String s) {
+        if (s == null || s.isEmpty()) {
             return false;
         }
-        for (int i = 0;i<s.length()/2;i++){
-            if (s.charAt(i)!=s.charAt(s.length()-i-1)){
+        for (int i = 0; i < s.length() / 2; i++) {
+            if (s.charAt(i) != s.charAt(s.length() - i - 1)) {
                 return false;
             }
         }
         return true;
     }
 
-    private void rever(String s,int startIndex,List<String> temp){
-        if (startIndex==s.length()){
+    private void rever(String s, int startIndex, List<String> temp) {
+        if (startIndex == s.length()) {
             res131.add(new ArrayList<>(temp));
             return;
         }
-        for(int i = startIndex;i<s.length();i++) {
-            String str = s.substring(startIndex,i+1);
-            if (isReaver(str)){
+        for (int i = startIndex; i < s.length(); i++) {
+            String str = s.substring(startIndex, i + 1);
+            if (isReaver(str)) {
                 temp.add(str);
-                rever(s,i+1,temp);
+                rever(s, i + 1, temp);
                 temp.removeLast();
             }
         }
     }
+
     public List<List<String>> partition(String s) {
-        rever(s,0,new ArrayList<>());
+        rever(s, 0, new ArrayList<>());
         return res131;
     }
 

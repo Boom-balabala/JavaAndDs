@@ -276,6 +276,78 @@ public class Hash {
         return true;
     }
 
+    // 208. 实现 Trie (前缀树)
+    class Trie {
+        class TrieNode {
+            Boolean isEnd;
+            TrieNode[] nodes;
+
+            TrieNode() {
+                isEnd = false;
+                nodes = null;
+            }
+        }
+
+        TrieNode[] root;
+
+        public Trie() {
+            root = new TrieNode[26];
+        }
+
+        public void insert(String word) {
+            TrieNode[] p = root;
+            for (int i = 0; i < word.length(); i++) {
+                int index = word.charAt(i) - 'a';
+                if (p[index] == null) {
+                    p[index] = new TrieNode();
+                }
+                if (i == word.length() - 1) {
+                    p[index].isEnd = true;
+                }
+                if (p[index].nodes == null) {
+                    p[index].nodes = new TrieNode[26];
+                }
+                p = p[index].nodes;
+            }
+        }
+
+        public boolean search(String word) {
+            TrieNode[] p = root;
+            for (int i = 0; i < word.length(); i++) {
+                int index = word.charAt(i) - 'a';
+                if (p[index] == null) {
+                    return false;
+                }
+                if (i == word.length() - 1) {
+                    return p[index].isEnd;
+                }
+                if (p[index].nodes == null) {
+                    return false;
+                }
+                p = p[index].nodes;
+            }
+            return false;
+        }
+
+        public boolean startsWith(String prefix) {
+            TrieNode[] p = root;
+            for (int i = 0; i < prefix.length(); i++) {
+                int index = prefix.charAt(i) - 'a';
+                if (p[index] == null) {
+                    return false;
+                }
+                if (i == prefix.length() - 1) {
+                    return true;
+                }
+                if (p[index].nodes == null) {
+                    return false;
+                }
+                p = p[index].nodes;
+            }
+            return false;
+        }
+    }
+
     // 219. 存在重复元素 II
     public boolean containsNearbyDuplicate(int[] nums, int k) {
         Map<Integer, Integer> map = new HashMap<>();
